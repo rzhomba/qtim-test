@@ -12,12 +12,21 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('/api/test')]
 class TestController extends AbstractController
 {
+    /**
+     * @param EventDispatcherInterface $eventDispatcher
+     * @param string|null $message
+     * @return JsonResponse
+     */
     #[Route('/event', name: 'event')]
     public function event(
         EventDispatcherInterface $eventDispatcher,
-        #[MapQueryParameter] ?string $message = 'Сообщение не передано',
+        #[MapQueryParameter] ?string $message,
     ): JsonResponse
     {
+        if (is_null($message)) {
+            $message = 'Сообщение не передано';
+        }
+
         $event = new TestEvent($message);
         $eventDispatcher->dispatch($event);
 
